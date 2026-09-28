@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Quiet Journal — a minimal daily journaling UI/UX demonstration." />
+  <title>Quiet Journal — Daily Journal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Login -->
+  <section id="loginView" class="auth-shell">
+    <div class="auth-card">
+      <div class="brand-mark">Q</div>
+      <p class="eyebrow">A quiet space for your thoughts</p>
+      <h1>Quiet Journal</h1>
+      <p class="auth-copy">Keep your days organized, one honest entry at a time.</p>
+
+      <form id="loginForm" class="auth-form">
+        <label>
+          <span>Email</span>
+          <input id="email" type="email" placeholder="you@example.com" required />
+        </label>
+        <label>
+          <span>Password</span>
+          <input id="password" type="password" placeholder="••••••••" required minlength="4" />
+        </label>
+        <button class="primary-btn full" type="submit">Enter journal <span>→</span></button>
+      </form>
+      <p class="demo-note">Demo mode · Your entries stay in this browser.</p>
+    </div>
+  </section>
+
+  <!-- App -->
+  <div id="appView" class="app-shell hidden">
+    <aside class="sidebar">
+      <div>
+        <div class="brand-row">
+          <div class="brand-mark small">Q</div>
+          <div>
+            <strong>Quiet Journal</strong>
+            <span>Personal space</span>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <button class="nav-item active" data-view="journal"><span>▦</span> Journal</button>
+          <button class="nav-item" data-view="insights"><span>◌</span> Insights</button>
+        </nav>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="mini-profile">
+          <div class="avatar" id="avatar">Y</div>
+          <div>
+            <strong id="profileName">You</strong>
+            <span id="profileEmail">you@example.com</span>
+          </div>
+        </div>
+        <button id="logoutBtn" class="logout-btn">Log out</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" id="dateLabel">Monday, September 28</p>
+          <h2 id="pageTitle">Good evening, <span id="firstName">there</span>.</h2>
+        </div>
+        <button id="newEntryBtn" class="primary-btn">+ New entry</button>
+      </header>
+
+      <section id="journalView" class="view">
+        <div class="stats-row">
+          <div class="stat-card">
+            <span class="stat-label">Total entries</span>
+            <strong id="totalEntries">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">This month</span>
+            <strong id="monthEntries">0</strong>
+          </div>
+          <div class="stat-card quote-card">
+            <span class="stat-label">A small reminder</span>
+            <strong>“Make space for what matters.”</strong>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="search-wrap">
+            <span>⌕</span>
+            <input id="searchInput" type="search" placeholder="Search entries..." />
+          </div>
+          <label class="sort-control">
+            <span>Sort by</span>
+            <select id="sortSelect">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="title">Title A–Z</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="entryList" class="entry-list"></div>
+        <div id="emptyState" class="empty-state hidden">
+          <div class="empty-icon">✦</div>
+          <h3>No entries yet</h3>
+          <p>Start with a thought, a moment, or simply how today felt.</p>
+          <button class="secondary-btn" id="emptyNewBtn">Write your first entry</button>
+        </div>
+      </section>
+
+      <section id="insightsView" class="view hidden">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Your writing rhythm</p>
+            <h3>Simple insights</h3>
+          </div>
+        </div>
+        <div class="insight-grid">
+          <div class="insight-card">
+            <span>Words written</span>
+            <strong id="wordCount">0</strong>
+            <small>Across all saved entries</small>
+          </div>
+          <div class="insight-card">
+            <span>Longest entry</span>
+            <strong id="longestEntry">0 words</strong>
+            <small>Your most detailed reflection</small>
+          </div>
+          <div class="insight-card">
+            <span>Writing days</span>
+            <strong id="writingDays">0</strong>
+            <small>Unique days with entries</small>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Entry modal -->
+  <div id="entryModal" class="modal-backdrop hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <div>
+          <p class="eyebrow">Journal entry</p>
+          <h3 id="modalTitle">New entry</h3>
+        </div>
+        <button id="closeModalBtn" class="icon-btn" aria-label="Close">×</button>
+      </div>
+      <form id="entryForm">
+        <input type="hidden" id="entryId" />
+        <label>
+          <span>Title</span>
+          <input id="entryTitle" type="text" placeholder="Give today a title..." maxlength="80" required />
+        </label>
+        <label>
+          <span>Date</span>
+          <input id="entryDate" type="date" required />
+        </label>
+        <label>
+          <span>How was your day?</span>
+          <div class="mood-row" id="moodRow">
+            <button type="button" data-mood="Calm">Calm</button>
+            <button type="button" data-mood="Good">Good</button>
+            <button type="button" data-mood="Focused">Focused</button>
+            <button type="button" data-mood="Thoughtful">Thoughtful</button>
+            <button type="button" data-mood="Tough">Tough</button>
+          </div>
+        </label>
+        <label>
+          <span>Your thoughts</span>
+          <textarea id="entryBody" rows="9" placeholder="Write freely. There are no right words..." maxlength="5000" required></textarea>
+        </label>
+        <div class="modal-actions">
+          <button type="button" id="cancelBtn" class="secondary-btn">Cancel</button>
+          <button type="submit" class="primary-btn">Save entry</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
